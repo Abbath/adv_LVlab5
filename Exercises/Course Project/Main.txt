@@ -1,0 +1,895 @@
+<VI syntaxVersion=11 LVversion=15008000 revision=115 name="Main.vi">
+<TITLE>Boiler Controller</TITLE>
+<HELP_PATH><PATH type="relative"><SEP>Course Project<SEP>documentation<SEP>Boiler Controller<SEP>Main.html</PATH></HELP_PATH>
+<HELP_TAG></HELP_TAG>
+<RTM_PATH type="custom"><PATH type="relative">Main.rtm</PATH></RTM_PATH>
+<DESC>The boiler controller allows a user to start and shut down a boiler.<LF>
+<LF>
+Use the Reset, Start, and Light Pilot controls to sequentially start the boiler. <LF>
+Use the Fuel Control Valve to change the flow of fuel into the boiler. <LF>
+Use the Stop Boiler button to shut down the boiler. <LF>
+To shut down the system or in the event of an emergency, use the Emergency Stop button to close the application completely.</DESC>
+<CONTENT>
+	<GROUPER>
+		<PARTS>
+		</PARTS></GROUPER>
+	<CONTROL ID=79 type="Boolean" name="Emergency Stop">
+		<DESC>Stop the application within 100ms. <LF>
+<LF>
+The boiler controller should not stop until it receives confirmation that the boiler stopped.</DESC>
+		<TIP>Stop the application.</TIP>
+		<PARTS>
+			<PART ID=22 order=0 type="Boolean Text"><MLABEL><STRINGS><STRING>Emergency Stop </STRING></STRINGS></MLABEL></PART>
+			<PART ID=82 order=0 type="Caption"><LABEL><STEXT>Emergency Stop</STEXT></LABEL></PART>
+		</PARTS>
+	</CONTROL>
+	<CONTROL ID=79 type="Boolean" name="Reset">
+		<DESC>Reset the boiler.<LF>
+Activate the Run Interlock on the boiler.</DESC>
+		<TIP>Reset the boiler.</TIP>
+		<PARTS>
+			<PART ID=22 order=0 type="Boolean Text"><MLABEL><STRINGS><STRING>Reset</STRING></STRINGS></MLABEL></PART>
+			<PART ID=82 order=0 type="Caption"><LABEL><STEXT>Reset</STEXT></LABEL></PART>
+		</PARTS>
+	</CONTROL>
+	<CONTROL ID=79 type="Boolean" name="Start">
+		<DESC>Start the primary fan for the pre-purge cycle. This fan runs for a fixed period of time.</DESC>
+		<TIP>Initiate pre-purge.</TIP>
+		<PARTS>
+			<PART ID=22 order=0 type="Boolean Text"><MLABEL><STRINGS><STRING>Start</STRING></STRINGS></MLABEL></PART>
+			<PART ID=82 order=0 type="Caption"><LABEL><STEXT>Start</STEXT></LABEL></PART>
+		</PARTS>
+	</CONTROL>
+	<CONTROL ID=81 type="String" name="Status">
+		<DESC>Indicates the current state of the system.</DESC>
+		<TIP>Indicates boiler status.</TIP>
+		<PARTS>
+			<PART ID=11 order=0 type="Text"><LABEL><STEXT>Lockout</STEXT></LABEL></PART>
+			<PART ID=82 order=0 type="Caption"><LABEL><STEXT>Status</STEXT></LABEL></PART>
+		</PARTS>
+		<DEFAULT><STRING></STRING></DEFAULT>
+	</CONTROL>
+	<CONTROL ID=79 type="Boolean" name="Primary Fan">
+		<DESC>The primary fan runs during purge cycles to clear any  combustible gasses that have accumulated in the system.</DESC>
+		<TIP>Indicates the ON/OFF status of the primary fan.</TIP>
+		<PARTS>
+			<PART ID=82 order=0 type="Caption"><LABEL><STEXT>Primary Fan</STEXT></LABEL></PART>
+		</PARTS>
+	</CONTROL>
+	<CONTROL ID=79 type="Boolean" name="Pilot Gas Valve">
+		<DESC>The pilot gas valve controls the flow of fuel to the pilot flame.</DESC>
+		<TIP>Inidicates the ON/OFF status of the pilot gas valve.</TIP>
+		<PARTS>
+			<PART ID=82 order=0 type="Caption"><LABEL><STEXT>Pilot Gas Valve</STEXT></LABEL></PART>
+		</PARTS>
+	</CONTROL>
+	<CONTROL ID=79 type="Boolean" name="Pilot">
+		<DESC>The pilot flame ignites the fuel provided to the boiler through the fuel control valve.</DESC>
+		<TIP>Inidicates the ON/OFF status of the pilot flame.</TIP>
+		<PARTS>
+			<PART ID=82 order=0 type="Caption"><LABEL><STEXT>Pilot</STEXT></LABEL></PART>
+		</PARTS>
+	</CONTROL>
+	<CONTROL ID=79 type="Boolean" name="Forced Draft Fan">
+		<DESC>The forced draft fan ensures that sufficient airflow is provided to the combustion chamber while the boiler is running.</DESC>
+		<TIP>Inidicates the ON/OFF status of the forced draft fan.</TIP>
+		<PARTS>
+			<PART ID=82 order=0 type="Caption"><LABEL><STEXT>Forced Draft Fan</STEXT></LABEL></PART>
+		</PARTS>
+	</CONTROL>
+	<CONTROL ID=79 type="Boolean" name="Light Pilot">
+		<DESC>Start the flow of gas and ignite the pilot.<LF>
+<LF>
+The flame sensor on the boiler measures the level of the pilot flame. When the flame level reaches its threshold, the controller increases the fuel control valve to 10% and turns on the forced draft fan. The flow of gas to the pilot stops and the pilot turns off.<LF>
+<LF>
+At this point, the boiler is running.</DESC>
+		<TIP>Initiate ignition.</TIP>
+		<PARTS>
+			<PART ID=22 order=0 type="Boolean Text"><MLABEL><STRINGS><STRING>Light Pilot</STRING></STRINGS></MLABEL></PART>
+			<PART ID=82 order=0 type="Caption"><LABEL><STEXT>Light Pilot</STEXT></LABEL></PART>
+		</PARTS>
+	</CONTROL>
+	<CONTROL ID=79 type="Boolean" name="Stop Boiler">
+		<DESC>Turn off the boiler and initiate a purge cycle. <LF>
+<LF>
+The fuel valve closes and the flame level is reduced to zero.<LF>
+The primary fan turns on to start the purge cycle, which lasts for a fixed period of time.<LF>
+<LF>
+At the end of this cycle, the system is back in its initial state.</DESC>
+		<TIP>Initiates boiler shutdown.</TIP>
+		<PARTS>
+			<PART ID=22 order=0 type="Boolean Text"><MLABEL><STRINGS><STRING>Stop Boiler</STRING></STRINGS></MLABEL></PART>
+			<PART ID=82 order=0 type="Caption"><LABEL><STEXT>Stop Boiler</STEXT></LABEL></PART>
+		</PARTS>
+	</CONTROL>
+	<CONTROL ID=88 type="Slide" name="Fuel Control Valve">
+		<DESC>Change the amount of fuel flowing into the boiler.<LF>
+<LF>
+Until the boiler is running, this value remains at 0. Once the boiler is running, the value may range from 10-75%.</DESC>
+		<TIP>Control the amount of fuel flowing to the boiler.</TIP>
+		<PARTS>
+			<PART ID=82 order=0 type="Caption"><LABEL><STEXT>Fuel Control Valve</STEXT></LABEL></PART>
+		</PARTS>
+	</CONTROL>
+</CONTENT>
+<BDCONTENT>
+	<CONTROL ID=100 type="Type Definition" name="MHL Data">
+		<DESC></DESC>
+		<TIP></TIP>
+		<PARTS>
+			<PART ID=8010 order=0 type="Type Def's Control">
+				<CONTROL ID=83 type="Cluster Constant" name="">
+					<DESC></DESC>
+					<TIP></TIP>
+					<PARTS>
+					</PARTS>
+					<CONTENT>
+						<GROUPER>
+							<PARTS>
+							</PARTS></GROUPER>
+						<CONTROL ID=100 type="Type Definition" name="MHL Configuration">
+							<DESC></DESC>
+							<TIP></TIP>
+							<PARTS>
+								<PART ID=8010 order=0 type="Type Def's Control">
+									<CONTROL ID=83 type="Cluster Constant" name="">
+										<DESC></DESC>
+										<TIP></TIP>
+										<PARTS>
+										</PARTS>
+										<CONTENT>
+											<GROUPER>
+												<PARTS>
+												</PARTS></GROUPER>
+											<CONTROL ID=80 type="Numeric Constant" name="Fuel Control Valve Minimum">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+												</PARTS>
+											</CONTROL>
+											<CONTROL ID=80 type="Numeric Constant" name="Fuel Control Valve Maximum">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+												</PARTS>
+											</CONTROL>
+										</CONTENT>
+									</CONTROL>
+								</PART>
+							</PARTS>
+						</CONTROL>
+						<CONTROL ID=100 type="Type Definition" name="MHL References">
+							<DESC></DESC>
+							<TIP></TIP>
+							<PARTS>
+								<PART ID=8010 order=0 type="Type Def's Control">
+									<CONTROL ID=83 type="Cluster Constant" name="">
+										<DESC></DESC>
+										<TIP></TIP>
+										<PARTS>
+										</PARTS>
+										<CONTENT>
+											<GROUPER>
+												<PARTS>
+												</PARTS></GROUPER>
+											<CONTROL ID=85 type="Class Specifier Constant" name="Fuel Control Valve Ref">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+													<PART ID=84 order=0 type=""><LABEL><STEXT><FONT predef=APPFONT color=007F7F>Boolean</STEXT></LABEL></PART>
+												</PARTS>
+											</CONTROL>
+											<CONTROL ID=85 type="Class Specifier Constant" name="Stop Boiler Ref">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+													<PART ID=84 order=0 type=""><LABEL><STEXT><FONT predef=APPFONT color=007F7F>Boolean</STEXT></LABEL></PART>
+												</PARTS>
+											</CONTROL>
+											<CONTROL ID=85 type="Class Specifier Constant" name="Light Pilot Ref">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+													<PART ID=84 order=0 type=""><LABEL><STEXT><FONT predef=APPFONT color=007F7F>Boolean</STEXT></LABEL></PART>
+												</PARTS>
+											</CONTROL>
+											<CONTROL ID=85 type="Class Specifier Constant" name="Start Ref">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+													<PART ID=84 order=0 type=""><LABEL><STEXT><FONT predef=APPFONT color=007F7F>Boolean</STEXT></LABEL></PART>
+												</PARTS>
+											</CONTROL>
+											<CONTROL ID=85 type="Class Specifier Constant" name="Reset Ref">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+													<PART ID=84 order=0 type=""><LABEL><STEXT><FONT predef=APPFONT color=007F7F>Digital (strict)</STEXT></LABEL></PART>
+												</PARTS>
+											</CONTROL>
+										</CONTENT>
+									</CONTROL>
+								</PART>
+							</PARTS>
+						</CONTROL>
+						<CONTROL ID=100 type="Type Definition" name="MHL User Interface Data">
+							<DESC></DESC>
+							<TIP></TIP>
+							<PARTS>
+								<PART ID=8010 order=0 type="Type Def's Control">
+									<CONTROL ID=83 type="Cluster Constant" name="">
+										<DESC></DESC>
+										<TIP></TIP>
+										<PARTS>
+										</PARTS>
+										<CONTENT>
+											<GROUPER>
+												<PARTS>
+												</PARTS></GROUPER>
+											<CONTROL ID=100 type="Type Definition" name="MHL Status">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+													<PART ID=8010 order=0 type="Type Def's Control">
+														<CONTROL ID=87 type="Enum" name="">
+															<DESC></DESC>
+															<TIP></TIP>
+															<PARTS>
+																<PART ID=12 order=0 type="Ring Text"><MLABEL><STRINGS></STRINGS></MLABEL></PART>
+															</PARTS>
+														</CONTROL>
+													</PART>
+												</PARTS>
+											</CONTROL>
+											<CONTROL ID=79 type="False Constant" name="Forced Draft Fan">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+												</PARTS>
+											</CONTROL>
+											<CONTROL ID=79 type="False Constant" name="Pilot">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+												</PARTS>
+											</CONTROL>
+											<CONTROL ID=79 type="False Constant" name="Pilot Gas Valve">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+												</PARTS>
+											</CONTROL>
+											<CONTROL ID=79 type="False Constant" name="Primary Fan">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+												</PARTS>
+											</CONTROL>
+											<CONTROL ID=80 type="Numeric Constant" name="Fuel Control Valve">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+												</PARTS>
+											</CONTROL>
+											<CONTROL ID=81 type="String Constant" name="Status">
+												<DESC></DESC>
+												<TIP></TIP>
+												<PARTS>
+													<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+												</PARTS>
+												<DEFAULT><SAME_AS_LABEL></DEFAULT>
+											</CONTROL>
+										</CONTENT>
+									</CONTROL>
+								</PART>
+							</PARTS>
+						</CONTROL>
+					</CONTENT>
+				</CONTROL>
+			</PART>
+		</PARTS>
+	</CONTROL>
+	<NODE ID=49 type="SubVI" name="Close Notifiers.vi" subVIName="Close Notifiers.vi">
+		<DESC></DESC>
+	</NODE>
+	<NODE ID=49 type="SubVI" name="Boiler.vi" subVIName="Boiler.vi">
+		<DESC></DESC>
+	</NODE>
+	<NODE ID=99 type="(Un)Bundle by Name">
+		<DESC></DESC>
+	</NODE>
+	<NODE ID=49 type="SubVI" name="Boiler System Open.vi" subVIName="Boiler System Open.vi">
+		<DESC></DESC>
+	</NODE>
+	<NODE ID=44 type="Select">
+		<DESC></DESC>
+		<BDCONTENT>
+		</BDCONTENT>
+		<BDCONTENT>
+			<NODE ID=47 type="Function" primID=54554853 primName="Quit LabVIEW">
+				<DESC></DESC>
+			</NODE>
+		</BDCONTENT>
+	</NODE>
+	<NODE ID=140 type="Property Node">
+		<DESC></DESC>
+	</NODE>
+	<NODE ID=49 type="SubVI" name="Boiler Controller.vi" subVIName="Boiler Controller.vi">
+		<DESC></DESC>
+	</NODE>
+	<NODE ID=47 type="Function" primID=45465255 primName="Unregister For Events">
+		<DESC></DESC>
+	</NODE>
+	<NODE ID=49 type="SubVI" subVIName="Destroy User Event - Stop.vi">
+		<DESC></DESC>
+	</NODE>
+	<NODE ID=99 type="(Un)Bundle by Name">
+		<DESC></DESC>
+	</NODE>
+	<NODE ID=49 type="SubVI" subVIName="Simple Error Handler.vi">
+		<DESC></DESC>
+	</NODE>
+	<NODE ID=370 type="Merge Errors">
+		<DESC></DESC>
+	</NODE>
+	<NODE ID=33 type="While Loop">
+		<DESC></DESC>
+		<BDCONTENT>
+			<NODE ID=44 type="Select">
+				<DESC></DESC>
+				<BDCONTENT>
+				</BDCONTENT>
+				<BDCONTENT>
+					<CONTROL ID=79 type="False Constant" name="Priority Message? (F)">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+						</PARTS>
+					</CONTROL>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Exit</STRING></DEFAULT>
+					</CONTROL>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<LABEL><STEXT>On error, send Exit message, and stop loop.</STEXT></LABEL>
+					<CONTROL ID=79 type="False Constant" name="Discard?">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+						</PARTS>
+					</CONTROL>
+				</BDCONTENT>
+			</NODE>
+			<LABEL><STEXT>Event Handling Loop (EHL)</STEXT></LABEL>
+			<NODE ID=213 type="Event Struct">
+				<DESC></DESC>
+				<BDCONTENT>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Reset</STRING></DEFAULT>
+					</CONTROL>
+				</BDCONTENT>
+				<BDCONTENT>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Start Sequence</STRING></DEFAULT>
+					</CONTROL>
+				</BDCONTENT>
+				<BDCONTENT>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Pilot</STRING></DEFAULT>
+					</CONTROL>
+				</BDCONTENT>
+				<BDCONTENT>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Fuel Control Valve</STRING></DEFAULT>
+					</CONTROL>
+				</BDCONTENT>
+				<BDCONTENT>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Shutdown</STRING></DEFAULT>
+					</CONTROL>
+				</BDCONTENT>
+				<BDCONTENT>
+					<CONTROL ID=79 type="False Constant" name="Priority Message? (F)">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+						</PARTS>
+					</CONTROL>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Initiate Stop</STRING></DEFAULT>
+					</CONTROL>
+					<CONTROL ID=79 type="False Constant" name="Discard?">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+						</PARTS>
+					</CONTROL>
+				</BDCONTENT>
+				<BDCONTENT>
+					<CONTROL ID=79 type="False Constant" name="Priority Message? (F)">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+						</PARTS>
+					</CONTROL>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT>Initiate Stop</STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><SAME_AS_LABEL></DEFAULT>
+					</CONTROL>
+					<CONTROL ID=79 type="False Constant" name="Discard?">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+						</PARTS>
+					</CONTROL>
+				</BDCONTENT>
+				<BDCONTENT>
+					<NODE ID=44 type="Select">
+						<DESC></DESC>
+						<BDCONTENT>
+						</BDCONTENT>
+						<BDCONTENT>
+							<CONTROL ID=81 type="String Constant" name="Message">
+								<DESC></DESC>
+								<TIP></TIP>
+								<PARTS>
+									<PART ID=11 order=0 type="Text"><LABEL><STEXT>Initiate Stop</STEXT></LABEL></PART>
+								</PARTS>
+								<DEFAULT><SAME_AS_LABEL></DEFAULT>
+							</CONTROL>
+							<CONTROL ID=79 type="False Constant" name="Priority Message? (F)">
+								<DESC></DESC>
+								<TIP></TIP>
+								<PARTS>
+								</PARTS>
+							</CONTROL>
+							<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+								<DESC></DESC>
+							</NODE>
+						</BDCONTENT>
+					</NODE>
+				</BDCONTENT>
+				<BDCONTENT>
+					<NODE ID=50 type="Global Variable" subVIName="Boiler System Globals.vi">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=50 type="Global Variable">
+						<DESC></DESC>
+					</NODE>
+					<LABEL><STEXT>The Message Handling Loop processed an ""Exit"" message, which fired this event to stop the Event Handling Loop.</STEXT></LABEL>
+					<CONTROL ID=79 type="False Constant" name="Discard?">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+						</PARTS>
+					</CONTROL>
+				</BDCONTENT>
+			</NODE>
+		</BDCONTENT>
+	</NODE>
+	<NODE ID=33 type="While Loop">
+		<DESC></DESC>
+		<BDCONTENT>
+			<NODE ID=49 type="SubVI" subVIName="Dequeue Message.vi">
+				<DESC></DESC>
+			</NODE>
+			<LABEL><STEXT>Message Handling Loop (MHL)</STEXT></LABEL>
+			<NODE ID=44 type="Select" name="Message Cases">
+				<DESC></DESC>
+				<BDCONTENT>
+					<NODE ID=49 type="SubVI" name="Initialize Panel.vi" subVIName="Initialize Panel.vi">
+						<DESC></DESC>
+					</NODE>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT>Update Display</STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><SAME_AS_LABEL></DEFAULT>
+					</CONTROL>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=182 type="CtlRefConst" name="Stop Boiler">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=182 type="CtlRefConst" name="Fuel Control Valve">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=182 type="CtlRefConst" name="Light Pilot">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=182 type="CtlRefConst" name="Start">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=182 type="CtlRefConst" name="Reset">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=99 type="(Un)Bundle by Name">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=99 type="(Un)Bundle by Name">
+						<DESC></DESC>
+					</NODE>
+				</BDCONTENT>
+				<BDCONTENT>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Reset Lockout</STRING></DEFAULT>
+					</CONTROL>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<LABEL><STEXT>Send a message to the ""Reset Lockout"" case of the boiler controller.</STEXT></LABEL>
+					<NODE ID=370 type="Merge Errors">
+						<DESC></DESC>
+					</NODE>
+				</BDCONTENT>
+				<BDCONTENT>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Pre-Purge</STRING></DEFAULT>
+					</CONTROL>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<LABEL><STEXT>Send a message to the ""Pre-Purge"" case of the boiler controller.</STEXT></LABEL>
+					<NODE ID=370 type="Merge Errors">
+						<DESC></DESC>
+					</NODE>
+				</BDCONTENT>
+				<BDCONTENT>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Ignition</STRING></DEFAULT>
+					</CONTROL>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<LABEL><STEXT>Send a message to the ""Ignition"" case of the boiler controller.</STEXT></LABEL>
+					<NODE ID=370 type="Merge Errors">
+						<DESC></DESC>
+					</NODE>
+				</BDCONTENT>
+				<BDCONTENT>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Update Fuel Control Valve</STRING></DEFAULT>
+					</CONTROL>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<LABEL><STEXT>Send a message to the ""Update Fuel Control Valve"" case of the boiler controller.</STEXT></LABEL>
+					<NODE ID=370 type="Merge Errors">
+						<DESC></DESC>
+					</NODE>
+				</BDCONTENT>
+				<BDCONTENT>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Shutdown</STRING></DEFAULT>
+					</CONTROL>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<LABEL><STEXT>Send a message to the ""Shutdown"" case of the boiler controller.</STEXT></LABEL>
+					<NODE ID=370 type="Merge Errors">
+						<DESC></DESC>
+					</NODE>
+				</BDCONTENT>
+				<BDCONTENT>
+					<NODE ID=99 type="(Un)Bundle by Name">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=50 type="Global Variable">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=99 type="(Un)Bundle by Name">
+						<DESC></DESC>
+					</NODE>
+					<CONTROL ID=100 type="Type Definition" name="MHL UI Data">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=8010 order=0 type="Type Def's Control">
+								<CONTROL ID=83 type="Cluster Constant" name="">
+									<DESC></DESC>
+									<TIP></TIP>
+									<PARTS>
+									</PARTS>
+									<CONTENT>
+										<GROUPER>
+											<PARTS>
+											</PARTS></GROUPER>
+										<CONTROL ID=100 type="Type Definition" name="MHL Status">
+											<DESC></DESC>
+											<TIP></TIP>
+											<PARTS>
+												<PART ID=8010 order=0 type="Type Def's Control">
+													<CONTROL ID=87 type="Enum" name="">
+														<DESC></DESC>
+														<TIP></TIP>
+														<PARTS>
+															<PART ID=12 order=0 type="Ring Text"><MLABEL><STRINGS></STRINGS></MLABEL></PART>
+														</PARTS>
+													</CONTROL>
+												</PART>
+											</PARTS>
+										</CONTROL>
+										<CONTROL ID=79 type="False Constant" name="Forced Draft Fan">
+											<DESC></DESC>
+											<TIP></TIP>
+											<PARTS>
+											</PARTS>
+										</CONTROL>
+										<CONTROL ID=79 type="False Constant" name="Pilot">
+											<DESC></DESC>
+											<TIP></TIP>
+											<PARTS>
+											</PARTS>
+										</CONTROL>
+										<CONTROL ID=79 type="False Constant" name="Pilot Gas Valve">
+											<DESC></DESC>
+											<TIP></TIP>
+											<PARTS>
+											</PARTS>
+										</CONTROL>
+										<CONTROL ID=79 type="False Constant" name="Primary Fan">
+											<DESC></DESC>
+											<TIP></TIP>
+											<PARTS>
+											</PARTS>
+										</CONTROL>
+										<CONTROL ID=80 type="Numeric Constant" name="Fuel Control Valve">
+											<DESC></DESC>
+											<TIP></TIP>
+											<PARTS>
+											</PARTS>
+										</CONTROL>
+										<CONTROL ID=81 type="String Constant" name="Status">
+											<DESC></DESC>
+											<TIP></TIP>
+											<PARTS>
+												<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+											</PARTS>
+											<DEFAULT><SAME_AS_LABEL></DEFAULT>
+										</CONTROL>
+									</CONTENT>
+								</CONTROL>
+							</PART>
+						</PARTS>
+					</CONTROL>
+					<NODE ID=47 type="Function" primID=564C4F54 primName="Variant To Data">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=370 type="Merge Errors">
+						<DESC></DESC>
+					</NODE>
+					<LABEL><STEXT>Update the indicators and write the UI data to the MHL Data cluster.</STEXT></LABEL>
+				</BDCONTENT>
+				<BDCONTENT>
+					<LABEL><STEXT>When stopping, first send a message to stop the boiler controller. Then wait for the boiler and boiler controller to exit.</STEXT></LABEL>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Wait on Boiler Exit</STRING></DEFAULT>
+					</CONTROL>
+					<CONTROL ID=81 type="String Constant" name="Message">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>Exit</STRING></DEFAULT>
+					</CONTROL>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+						<DESC></DESC>
+					</NODE>
+				</BDCONTENT>
+				<BDCONTENT>
+					<NODE ID=44 type="Select">
+						<DESC></DESC>
+						<BDCONTENT>
+							<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+								<DESC></DESC>
+							</NODE>
+							<CONTROL ID=81 type="String Constant" name="Message">
+								<DESC></DESC>
+								<TIP></TIP>
+								<PARTS>
+									<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+								</PARTS>
+								<DEFAULT><STRING>Exit</STRING></DEFAULT>
+							</CONTROL>
+						</BDCONTENT>
+						<BDCONTENT>
+							<NODE ID=49 type="SubVI" subVIName="Enqueue Message.vi">
+								<DESC></DESC>
+							</NODE>
+							<CONTROL ID=81 type="String Constant" name="Message">
+								<DESC></DESC>
+								<TIP></TIP>
+								<PARTS>
+									<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+								</PARTS>
+								<DEFAULT><STRING>Wait on Boiler Exit</STRING></DEFAULT>
+							</CONTROL>
+						</BDCONTENT>
+					</NODE>
+					<CONTROL ID=80 type="Numeric Constant" name="timeout in ms (-1)">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+						</PARTS>
+					</CONTROL>
+					<NODE ID=47 type="Function" primID=40544F4E primName="Wait on Notification">
+						<DESC></DESC>
+					</NODE>
+					<LABEL><STEXT>Monitor the boiler controller to determine if it has completed its Exit. Wait 10 milliseconds for the boiler controller to respond. <LF>
+If the notification does not occur, then enqueue another Wait on Boiler Exit message.<LF>
+If the notification occurs, then exit the Message Handling Loop. </STEXT></LABEL>
+				</BDCONTENT>
+				<BDCONTENT>
+					<NODE ID=49 type="SubVI" subVIName="Fire User Event - Stop.vi">
+						<DESC></DESC>
+					</NODE>
+					<NODE ID=370 type="Merge Errors">
+						<DESC></DESC>
+					</NODE>
+					<LABEL><STEXT>Stop the VI</STEXT></LABEL>
+					<LABEL><STEXT>Release the message queue reference</STEXT></LABEL>
+					<CONTROL ID=79 type="False Constant" >
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+						</PARTS>
+					</CONTROL>
+					<NODE ID=47 type="Function" primID=7D455551 primName="Release Queue">
+						<DESC></DESC>
+					</NODE>
+				</BDCONTENT>
+				<BDCONTENT>
+					<CONTROL ID=80 type="Numeric Constant" name="error code (0)">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+						</PARTS>
+					</CONTROL>
+					<NODE ID=49 type="SubVI" subVIName="Error Cluster From Error Code.vi">
+						<DESC></DESC>
+					</NODE>
+					<CONTROL ID=81 type="String Constant" name="Unknown Message Error Text">
+						<DESC></DESC>
+						<TIP></TIP>
+						<PARTS>
+							<PART ID=11 order=0 type="Text"><LABEL><STEXT></STEXT></LABEL></PART>
+						</PARTS>
+						<DEFAULT><STRING>The invalid message string ""%s"" was received in the Message Handling Loop.</STRING></DEFAULT>
+					</CONTROL>
+					<NODE ID=147 type="Format Into String">
+						<DESC></DESC>
+					</NODE>
+					<LABEL><STEXT>'Default' case only runs if there is a message that isn't defined in any of the other cases.  Output a programming error.</STEXT></LABEL>
+				</BDCONTENT>
+			</NODE>
+			<WIRE>
+				<PART ID=16 order=0 type="Name Label"><LABEL><STEXT>Configuration</STEXT></LABEL></PART>
+			</WIRE>
+			<WIRE>
+				<PART ID=16 order=0 type="Name Label"><LABEL><STEXT>Controller Exit Notifier</STEXT></LABEL></PART>
+			</WIRE>
+			<WIRE>
+				<PART ID=16 order=0 type="Name Label"><LABEL><STEXT>Controller Queue</STEXT></LABEL></PART>
+			</WIRE>
+			<WIRE>
+				<PART ID=16 order=0 type="Name Label"><LABEL><STEXT>MHL Queue</STEXT></LABEL></PART>
+			</WIRE>
+			<WIRE>
+				<PART ID=16 order=0 type="Name Label"><LABEL><STEXT>Stop Event</STEXT></LABEL></PART>
+			</WIRE>
+			<WIRE>
+				<PART ID=16 order=0 type="Name Label"><LABEL><STEXT>Data Cluster</STEXT></LABEL></PART>
+			</WIRE>
+		</BDCONTENT>
+	</NODE>
+	<WIRE>
+		<PART ID=16 order=0 type="Name Label"><LABEL><STEXT>Notifiers</STEXT></LABEL></PART>
+	</WIRE>
+	<WIRE>
+		<PART ID=16 order=0 type="Name Label"><LABEL><STEXT>Stop Event</STEXT></LABEL></PART>
+	</WIRE>
+	<WIRE>
+		<PART ID=16 order=0 type="Name Label"><LABEL><STEXT>Stop Event Reg Refnum</STEXT></LABEL></PART>
+	</WIRE>
+</BDCONTENT>
+</VI>
+
+
